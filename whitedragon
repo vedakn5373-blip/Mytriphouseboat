@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Trip House Boat - Guest Guide</title>
+    <style>
+        :root {
+            --primary-color: #023e8a;
+            --secondary-color: #0077b6;
+            --text-color: #2b2d42;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .hero-img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+
+        .rule-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            margin-right: 10px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .footer-info {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen" class="container">
+        <h1>Welcome to My Trip House Boat</h1>
+        <img src="houseboat.jpg" alt="My Trip House Boat" class="hero-img">
+        <p>We are thrilled to have you onboard! Before we set sail, please take a moment to review our house rules and facilities to ensure a safe and comfortable journey.</p>
+        <button class="btn" onclick="startRules()">View Rules & Regulations</button>
+    </div>
+
+    <div id="rules-screen" class="container hidden">
+        <h1 style="font-size: 1.5rem;">Facilities & Rules</h1>
+        
+        <div class="progress-bar">
+            <div id="progress" class="progress-fill"></div>
+        </div>
+
+        <div id="rule-content" class="rule-text">
+            </div>
+
+        <div class="button-group">
+            <button id="prev-btn" class="btn btn-secondary hidden" onclick="prevRule()">Previous</button>
+            <button id="next-btn" class="btn" onclick="nextRule()">Next</button>
+        </div>
+    </div>
+
+    <div id="end-screen" class="container hidden">
+        <h1>Have a Wonderful Journey!</h1>
+        <p>Thank you for cooperating with our crew. If you need any assistance, please reach out to our staff onboard.</p>
+        
+        <div class="footer-info">
+            <strong>Emergency Contact Numbers:</strong><br>
+            +91 9746881234 | +91 7293007777 | +91 9633123413
+        </div>
+        <br>
+        <button class="btn" onclick="restart()">Review Rules Again</button>
+    </div>
+
+    <script>
+        // Array containing all 21 points extracted from the image
+        const rules = [
+            "Houseboats have limited facilities and resources. Do not compare it to a HOTEL. Kindly co-operate with the limitations.",
+            "The storage capacity of the water tank is limited. Keep the tap closed after use.",
+            "Please do not drop sanitary napkins, plastic, and other insoluble things in the closet which clog up the closet and the bio-tank. Rather drop it into the trash bin provided.",
+            "To take care of your personal belongings and baggage before you alight from the houseboat after the cruise.",
+            "Breakage, destruction of any property of the houseboat would solely be the responsibility of the guest and would be charged for the same.",
+            "Removing and putting away footwear helps in keeping the houseboat clean and neat.",
+            "Kindly cooperate with the crew members, so that they can serve you better.",
+            "Do not forget to leave your valuable comments and suggestions.",
+            "Check in time: 12 noon and Check out: Next day morning 9 AM.",
+            "1 PM boat will start do cruise and till 5:15 PM it will be in cruise. After 5:15 PM it will park in our docking point (landside) till the morning 8 AM. After 8 AM it will go for morning cruise and checkout at 9 AM.",
+            "For deluxe bookings only, AC timing is 9 PM to 6 AM. If guests want to upgrade to premium full-time AC, they can upgrade with extra payments.",
+            "All the inclusions we will provide after parking only.",
+            "Halting time: evening 5:15 PM to 8:00 AM morning.",
+            "Dinner time is in between 8:30 PM.",
+            "After 10:30 PM, guests are not allowed in the lobby area. Guests should be in their room after 10:30 PM.",
+            "Our Meal Plan is fixed and cannot change as per the guest preference. If anything other than the menu is requested, it is extra payable.",
+            "We are not responsible to take the expenses if the guest wants to go outside for other sightseeing other than the houseboat.",
+            "Use this form as a boarding pass. It is compulsory to return this to staff when you are checking out from the boat. On this basis only we take responsibility for your belongings which you forget to take from the boat.",
+            "Smoking and use of alcohol is strictly prohibited.",
+            "Do not plug any electronic item other than mobile chargers and laptops inside the room.",
+            "Cake, beverages, bouquet, and other decoration items are extra chargeable, and payment should be updated before check-in time."
+        ];
+
+        let currentStep = 0;
+
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const rulesScreen = document.getElementById('rules-screen');
+        const endScreen = document.getElementById('end-screen');
+        const ruleContent = document.getElementById('rule-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress');
+
+        function startRules() {
+            welcomeScreen.classList.add('hidden');
+            rulesScreen.classList.remove('hidden');
+            currentStep = 0;
+            showRule();
+        }
+
+        function showRule() {
+            // Update rule text
+            ruleContent.textContent = `${currentStep + 1}. ${rules[currentStep]}`;
+            
+            // Update progress bar
+            const progressPercent = ((currentStep + 1) / rules.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            // Toggle Back button visibility
+            if (currentStep === 0) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+
+            // Change Next button text on the last rule
+            if (currentStep === rules.length - 1) {
+                nextBtn.textContent = "Finish & Accept";
+            } else {
+                nextBtn.textContent = "Next";
+            }
+        }
+
+        function nextRule() {
+            if (currentStep < rules.length - 1) {
+                currentStep++;
+                showRule();
+            } else {
+                // If finished all rules, show final screen
+                rulesScreen.classList.add('hidden');
+                endScreen.classList.remove('hidden');
+            }
+        }
+
+        function prevRule() {
+            if (currentStep > 0) {
+                currentStep--;
+                showRule();
+            }
+        }
+
+        function restart() {
+            endScreen.classList.add('hidden');
+            welcomeScreen.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
