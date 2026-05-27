@@ -40,10 +40,6 @@
             text-align: center;
         }
 
-        .hidden {
-            display: none !important;
-        }
-
         h1 {
             color: var(--primary-color);
             margin-bottom: 20px;
@@ -135,14 +131,14 @@
 </head>
 <body>
 
-    <div id="welcome-screen" class="container">
+    <div id="welcome-screen" class="container" style="display: block;">
         <h1>Welcome to<br>My Trip House Boat</h1>
         <img src="https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=600" alt="House Boat" class="hero-img">
         <p style="line-height: 1.5; color: #475569; margin-bottom: 30px; font-size: 1rem;">We are thrilled to have you onboard! Before we set sail, please take a moment to review our house rules and facilities to ensure a safe and comfortable journey.</p>
         <button class="btn" onclick="startRules()">View Rules & Regulations</button>
     </div>
 
-    <div id="rules-screen" class="container hidden">
+    <div id="rules-screen" class="container" style="display: none;">
         <h1 style="font-size: 1.2rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Facilities & Rules</h1>
         
         <div class="progress-bar">
@@ -152,12 +148,12 @@
         <div id="rule-content" class="rule-text"></div>
 
         <div class="button-group">
-            <button id="prev-btn" class="btn btn-secondary hidden" onclick="prevRule()">Previous</button>
+            <button id="prev-btn" class="btn btn-secondary" style="display: none;" onclick="prevRule()">Previous</button>
             <button id="next-btn" class="btn" onclick="nextRule()">Next</button>
         </div>
     </div>
 
-    <div id="end-screen" class="container hidden">
+    <div id="end-screen" class="container" style="display: none;">
         <h1>Have a Wonderful Journey!</h1>
         <p style="color: #475569; line-height: 1.5; margin-bottom: 20px;">Thank you for cooperating with our crew. If you need any assistance, please reach out to our staff onboard.</p>
         
@@ -205,8 +201,8 @@
         const progressBar = document.getElementById('progress');
 
         function startRules() {
-            welcomeScreen.classList.add('hidden');
-            rulesScreen.remove('hidden');
+            welcomeScreen.style.display = 'none';
+            rulesScreen.style.display = 'block';
             currentStep = 0;
             showRule();
         }
@@ -218,9 +214,9 @@
             progressBar.style.width = `${progressPercent}%`;
 
             if (currentStep === 0) {
-                prevBtn.classList.add('hidden');
+                prevBtn.style.display = 'none';
             } else {
-                prevBtn.classList.remove('hidden');
+                prevBtn.style.display = 'block';
             }
 
             if (currentStep === rules.length - 1) {
@@ -235,8 +231,8 @@
                 currentStep++;
                 showRule();
             } else {
-                rulesScreen.classList.add('hidden');
-                endScreen.classList.remove('hidden');
+                rulesScreen.style.display = 'none';
+                endScreen.style.display = 'block';
             }
         }
 
@@ -248,8 +244,8 @@
         }
 
         function restart() {
-            endScreen.classList.add('hidden');
-            welcomeScreen.classList.remove('hidden');
+            endScreen.style.display = 'none';
+            welcomeScreen.style.display = 'block';
         }
     </script>
 </body>
