@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Trip House Boat - Guest Guide</title>
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignal = window.OneSignal || [];
+      OneSignal.push(function() {
+        OneSignal.init({
+          appId: "8032a63f-baa9-4c36-b9b4-393b3fa180f4",
+          safari_web_id: "",
+          notifyButton: { enable: false },
+        });
+      });
+    </script>
     <style>
         :root {
             --primary-color: #023e8a;
@@ -13,11 +24,7 @@
             --card-bg: #ffffff;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -77,7 +84,6 @@
             min-height: 150px;
             display: flex;
             align-items: center;
-            justify-content: flex-start;
             margin-bottom: 30px;
             font-weight: 500;
             text-align: left;
@@ -88,44 +94,49 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 14px 28px;
+            padding: 14px 24px;
             font-size: 1rem;
             border-radius: 30px;
             cursor: pointer;
             font-weight: 600;
             width: 100%;
+            margin-bottom: 12px;
             transition: background 0.2s;
+            display: inline-block;
+            text-decoration: none;
             box-shadow: 0 4px 12px rgba(2, 62, 138, 0.2);
         }
 
-        .btn:hover {
-            background-color: var(--secondary-color);
-        }
+        .btn:hover { background-color: var(--secondary-color); }
+        .btn-secondary { background-color: #64748b; box-shadow: 0 4px 12px rgba(100, 116, 139, 0.2); }
+        .btn-secondary:hover { background-color: #475569; }
+        .btn-outline { background-color: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); box-shadow: none; }
+        .btn-outline:hover { background-color: #e6f0fa; }
 
-        .btn-secondary {
-            background-color: #64748b;
-            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.2);
-        }
+        .button-group { display: flex; justify-content: center; gap: 12px; width: 100%; }
 
-        .btn-secondary:hover {
-            background-color: #475569;
+        /* Modal / Popup Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center; align-items: center;
+            z-index: 1000; padding: 15px;
         }
-
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
+        .modal-content {
+            background: white; padding: 25px; border-radius: 20px;
+            max-width: 400px; width: 100%; text-align: left;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
+        .modal h2 { color: var(--primary-color); margin-bottom: 15px; font-size: 1.4rem; text-align: center; }
+        .activity-item { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; }
+        .activity-item:last-child { border-bottom: none; margin-bottom: 20px; }
+        .activity-title { font-weight: bold; color: var(--secondary-color); margin-bottom: 4px; }
 
         .footer-info {
-            margin-top: 25px;
-            font-size: 0.9rem;
-            color: #64748b;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 20px;
-            text-align: left;
-            line-height: 1.5;
+            margin-top: 25px; font-size: 0.9rem; color: #64748b;
+            border-top: 1px solid #e2e8f0; padding-top: 20px; text-align: left; line-height: 1.5;
         }
     </style>
 </head>
@@ -134,19 +145,16 @@
     <div id="welcome-screen" class="container" style="display: block;">
         <h1>Welcome to<br>My Trip House Boat</h1>
         <img src="https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=600" alt="House Boat" class="hero-img">
-        <p style="line-height: 1.5; color: #475569; margin-bottom: 30px; font-size: 1rem;">We are thrilled to have you onboard! Before we set sail, please take a moment to review our house rules and facilities to ensure a safe and comfortable journey.</p>
+        
         <button class="btn" onclick="startRules()">View Rules & Regulations</button>
+        <button class="btn btn-outline" onclick="openActivities()">Activities & Entertainment</button>
+        <button class="btn btn-outline" onclick="registerNotifications()">🔔 Turn On Live Notifications</button>
     </div>
 
     <div id="rules-screen" class="container" style="display: none;">
         <h1 style="font-size: 1.2rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Facilities & Rules</h1>
-        
-        <div class="progress-bar">
-            <div id="progress" class="progress-fill"></div>
-        </div>
-
+        <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
         <div id="rule-content" class="rule-text"></div>
-
         <div class="button-group">
             <button id="prev-btn" class="btn btn-secondary" style="display: none;" onclick="prevRule()">Previous</button>
             <button id="next-btn" class="btn" onclick="nextRule()">Next</button>
@@ -155,14 +163,34 @@
 
     <div id="end-screen" class="container" style="display: none;">
         <h1>Have a Wonderful Journey!</h1>
-        <p style="color: #475569; line-height: 1.5; margin-bottom: 20px;">Thank you for cooperating with our crew. If you need any assistance, please reach out to our staff onboard.</p>
+        <p style="color: #475569; line-height: 1.5; margin-bottom: 20px;">Thank you for cooperating with our crew.</p>
+        
+        <button class="btn btn-outline" onclick="openActivities()">Activities & Entertainment</button>
+        <button class="btn btn-secondary" onclick="restart()">Review Rules Again</button>
         
         <div class="footer-info">
             <strong style="color: var(--primary-color);">Emergency Contact Nos:</strong><br>
             +91 9746881234, +91 7293007777, +91 9633123413
         </div>
-        <br>
-        <button class="btn" onclick="restart()">Review Rules Again</button>
+    </div>
+
+    <div id="activities-modal" class="modal">
+        <div class="modal-content">
+            <h2>Onboard Activities</h2>
+            <div class="activity-item">
+                <div class="activity-title">🚤 Speed Boat Activity</div>
+                <p style="font-size:0.95rem; color:#475569;">Experience thrilling high-speed boat cruising across the scenic backwaters.</p>
+            </div>
+            <div class="activity-item">
+                <div class="activity-title">💆 Kerala Traditional Ayurvedic Massage</div>
+                <p style="font-size:0.95rem; color:#475569;">Relax your mind and body with authentic traditional wellness massage options.</p>
+            </div>
+            <div class="activity-item">
+                <div class="activity-title">🎵 DJ Light Music (6:00 PM - 8:00 PM)</div>
+                <p style="font-size:0.95rem; color:#475569;">Enjoy vibrant light music and dance mixes during our sunset docking hours.</p>
+            </div>
+            <button class="btn" onclick="closeActivities()">Close</button>
+        </div>
     </div>
 
     <script>
@@ -199,6 +227,7 @@
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const progressBar = document.getElementById('progress');
+        const modal = document.getElementById('activities-modal');
 
         function startRules() {
             welcomeScreen.style.display = 'none';
@@ -209,21 +238,10 @@
 
         function showRule() {
             ruleContent.textContent = `${currentStep + 1}. ${rules[currentStep]}`;
-            
             const progressPercent = ((currentStep + 1) / rules.length) * 100;
             progressBar.style.width = `${progressPercent}%`;
-
-            if (currentStep === 0) {
-                prevBtn.style.display = 'none';
-            } else {
-                prevBtn.style.display = 'block';
-            }
-
-            if (currentStep === rules.length - 1) {
-                nextBtn.textContent = "Finish & Accept";
-            } else {
-                nextBtn.textContent = "Next";
-            }
+            prevBtn.style.display = (currentStep === 0) ? 'none' : 'block';
+            nextBtn.textContent = (currentStep === rules.length - 1) ? "Finish & Accept" : "Next";
         }
 
         function nextRule() {
@@ -246,6 +264,15 @@
         function restart() {
             endScreen.style.display = 'none';
             welcomeScreen.style.display = 'block';
+        }
+
+        function openActivities() { modal.style.display = 'flex'; }
+        function closeActivities() { modal.style.display = 'none'; }
+        
+        function registerNotifications() {
+            OneSignal.push(function() {
+                OneSignal.showNativePrompt();
+            });
         }
     </script>
 </body>
