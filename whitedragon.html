@@ -47,6 +47,8 @@
             text-align: center;
         }
 
+        .hidden { display: none !important; }
+
         h1 {
             color: var(--primary-color);
             margin-bottom: 20px;
@@ -81,7 +83,7 @@
         .rule-text {
             font-size: 1.1rem;
             line-height: 1.6;
-            min-height: 150px;
+            min-height: 160px;
             display: flex;
             align-items: center;
             margin-bottom: 30px;
@@ -142,7 +144,7 @@
 </head>
 <body>
 
-    <div id="welcome-screen" class="container" style="display: block;">
+    <div id="welcome-screen" class="container">
         <h1>Welcome to<br>My Trip House Boat</h1>
         <img src="https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=600" alt="House Boat" class="hero-img">
         
@@ -151,17 +153,17 @@
         <button class="btn btn-outline" onclick="registerNotifications()">🔔 Turn On Live Notifications</button>
     </div>
 
-    <div id="rules-screen" class="container" style="display: none;">
+    <div id="rules-screen" class="container hidden">
         <h1 style="font-size: 1.2rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Facilities & Rules</h1>
         <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
         <div id="rule-content" class="rule-text"></div>
         <div class="button-group">
-            <button id="prev-btn" class="btn btn-secondary" style="display: none;" onclick="prevRule()">Previous</button>
+            <button id="prev-btn" class="btn btn-secondary hidden" onclick="prevRule()">Previous</button>
             <button id="next-btn" class="btn" onclick="nextRule()">Next</button>
         </div>
     </div>
 
-    <div id="end-screen" class="container" style="display: none;">
+    <div id="end-screen" class="container hidden">
         <h1>Have a Wonderful Journey!</h1>
         <p style="color: #475569; line-height: 1.5; margin-bottom: 20px;">Thank you for cooperating with our crew.</p>
         
@@ -230,8 +232,8 @@
         const modal = document.getElementById('activities-modal');
 
         function startRules() {
-            welcomeScreen.style.display = 'none';
-            rulesScreen.style.display = 'block';
+            welcomeScreen.classList.add('hidden');
+            rulesScreen.classList.remove('hidden');
             currentStep = 0;
             showRule();
         }
@@ -240,7 +242,13 @@
             ruleContent.textContent = `${currentStep + 1}. ${rules[currentStep]}`;
             const progressPercent = ((currentStep + 1) / rules.length) * 100;
             progressBar.style.width = `${progressPercent}%`;
-            prevBtn.style.display = (currentStep === 0) ? 'none' : 'block';
+            
+            if (currentStep === 0) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+            
             nextBtn.textContent = (currentStep === rules.length - 1) ? "Finish & Accept" : "Next";
         }
 
@@ -249,8 +257,8 @@
                 currentStep++;
                 showRule();
             } else {
-                rulesScreen.style.display = 'none';
-                endScreen.style.display = 'block';
+                rulesScreen.classList.add('hidden');
+                endScreen.classList.remove('hidden');
             }
         }
 
@@ -262,8 +270,8 @@
         }
 
         function restart() {
-            endScreen.style.display = 'none';
-            welcomeScreen.style.display = 'block';
+            endScreen.classList.add('hidden');
+            welcomeScreen.classList.remove('hidden');
         }
 
         function openActivities() { modal.style.display = 'flex'; }
