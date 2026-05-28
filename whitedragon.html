@@ -12,6 +12,7 @@
           appId: "8032a63f-baa9-4c36-b9b4-393b3fa180f4",
           safari_web_id: "",
           notifyButton: { enable: false },
+          allowLocalhostAsSecureOrigin: true
         });
       });
     </script>
@@ -278,9 +279,14 @@
         function closeActivities() { modal.style.display = 'none'; }
         
         function registerNotifications() {
-            OneSignal.push(function() {
-                OneSignal.showNativePrompt();
-            });
+            try {
+                // Uses the elegant sliding prompt safe for mobile views
+                OneSignal.push(function() {
+                    OneSignal.slidedown.showHtmlPrompt();
+                });
+            } catch(e) {
+                alert("Please open this link inside Google Chrome or Safari to allow alerts.");
+            }
         }
     </script>
 </body>
