@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boat Admin Panel - Send Alert</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+        .admin-box {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        h2 { color: #38bdf8; text-align: center; margin-top: 0; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
+        select, textarea {
+            width: 100%; padding: 12px; border-radius: 8px;
+            border: 1px solid #334155; background: #0f172a;
+            color: white; margin-bottom: 20px; font-size: 1rem;
+            box-sizing: border-box;
+        }
+        textarea { resize: none; height: 80px; }
+        .send-btn {
+            background: #0284c7; color: white; border: none;
+            padding: 14px; width: 100%; border-radius: 8px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .send-btn:hover { background: #0369a1; }
+        #status-msg { text-align: center; font-weight: bold; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <h2>Boat Crew Admin</h2>
+        
+        <label for="preset-select">Quick Announcements:</label>
+        <select id="preset-select" onchange="usePreset()">
+            <option value="">-- Choose Quick Message --</option>
+            <option value="Delicious food is ready! Please proceed to the dining area.">🍲 Food is Ready</option>
+            <option value="The sunset cruise is starting now. Come up to the deck view area!">🌅 Cruise Starting</option>
+            <option value="Our DJ music session is starting now in the main lobby! 🎵">🎵 DJ Music Starting</option>
+            <option value="Good morning! Breakfast is served.">☕ Breakfast is Served</option>
+        </select>
+
+        <label for="custom-msg">Or Custom Announcement Text:</label>
+        <textarea id="custom-msg" placeholder="Type what you want to broadcast to guests..."></textarea>
+
+        <button class="send-btn" onclick="broadcastNotification()">Push Notification to All Guests</button>
+        
+        <div id="status-msg"></div>
+    </div>
+
+    <script>
+        function usePreset() {
+            const preset = document.getElementById('preset-select').value;
+            if(preset) {
+                document.getElementById('custom-msg').value = preset;
+            }
+        }
+
+        async function broadcastNotification() {
+            const messageText = document.getElementById('custom-msg').value.trim();
+            const statusElement = document.getElementById('status-msg');
+            
+            if(!messageText) {
+                statusElement.style.color = "#ef4444";
+                statusElement.textContent = "Please enter or choose a message first!";
+                return;
+            }
+
+            // CONFIGURATION - Put your unique keys here
+            const ONESIGNAL_APP_ID = "8032a63f-baa9-4c36-b9b4-393b3fa180f4";
+            const ONESIGNAL_REST_KEY = "2u7falokbejmv37ldmvgfqlxj";
+
+            statusElement.style.color = "#eab308";
+            statusElement.textContent = "Sending broadcast alert...";
+
+            try {
+                const response = await fetch("https://onesignal.com/api/v1/notifications", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8",
+                        "Authorization": `Basic ${ONESIGNAL_REST_KEY}`
+                    },
+                    body: JSON.stringify({
+                        app_id: ONESIGNAL_APP_ID,
+                        included_segments: ["Total Subscriptions"],
+                        headings: {"en": "My Trip House Boat"},
+                        contents: {"en": messageText}
+                    })
+                });
+
+                if(response.ok) {
+                    statusElement.style.color = "#22c55e";
+                    statusElement.textContent = "✅ Notification sent successfully!";
+                    document.getElementById('custom-msg').value = "";
+                    document.getElementById('preset-select').value = "";
+                } else {
+                    statusElement.style.color = "#ef4444";
+                    statusElement.textContent = "Error sending alert.";
+                }
+            } catch (error) {
+                statusElement.style.color = "#ef4444";
+                statusElement.textContent = "Connection failed.";
+            }
+        }
+    </script>
+</body>
+</html>
