@@ -40,7 +40,7 @@
             transition: background 0.2s;
         }
         .send-btn:hover { background: #0369a1; }
-        #status-msg { text-align: center; font-weight: bold; margin-top: 15px; }
+        #status-msg { text-align: center; font-weight: bold; margin-top: 15px; font-size: 0.95rem; }
     </style>
 </head>
 <body>
@@ -83,7 +83,7 @@
                 return;
             }
 
-            // CONFIGURATION - Put your unique keys here
+            // CONFIGURATION - Injected keys
             const ONESIGNAL_APP_ID = "8032a63f-baa9-4c36-b9b4-393b3fa180f4";
             const ONESIGNAL_REST_KEY = "2u7falokbejmv37ldmvgfqlxj";
 
@@ -95,7 +95,7 @@
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json; charset=utf-8",
-                        "Authorization": `Basic ${ONESIGNAL_REST_KEY}`
+                        "Authorization": "Basic " + ONESIGNAL_REST_KEY
                     },
                     body: JSON.stringify({
                         app_id: ONESIGNAL_APP_ID,
@@ -111,12 +111,13 @@
                     document.getElementById('custom-msg').value = "";
                     document.getElementById('preset-select').value = "";
                 } else {
+                    const errData = await response.json();
                     statusElement.style.color = "#ef4444";
-                    statusElement.textContent = "Error sending alert.";
+                    statusElement.textContent = "Error: " + (errData.errors ? errData.errors[0] : "Invalid credentials setup.");
                 }
             } catch (error) {
                 statusElement.style.color = "#ef4444";
-                statusElement.textContent = "Connection failed.";
+                statusElement.textContent = "Network error. Check internet connection.";
             }
         }
     </script>
